@@ -31,6 +31,7 @@ func NewShopHandler() *shopHandler {
 func (h *shopHandler) Register(router fiber.Router) {
 	router.Post("/shops", middleware.UserIdHeader, h.CreateShop)
 	router.Get("/shops/:id", h.GetShop)
+	router.Delete("/shops/:id", middleware.UserIdHeader, h.DeleteShop)
 
 }
 
@@ -86,4 +87,28 @@ func (h *shopHandler) GetShop(c *fiber.Ctx) error {
 		return c.Status(code).JSON(response.Error(errs))
 	}
 	return c.Status(fiber.StatusOK).JSON(response.Success(resp, ""))
+}
+
+func (h *shopHandler) DeleteShop(c *fiber.Ctx) error {
+	var (
+		req = new(entity.DeleteShopRequest)
+		ctx = c.Context()
+		v   = adapter.Adapters.Validator
+		l   = middleware.GetLocals(c)
+	)
+	req.UserId = l.UserId
+	req.Id = c.Params("id")
+
+	if err := v.Validate(req); err != nil {
+		log.Warn().Err(err).Any("payload", req).Msg("handler::DeleteShop - Validate request body")
+		code, errs := errmsg.Errors(err, req)
+		return c.Status(code).JSON(response.Error(errs))
+	}
+
+	err := h.service.DeleteShop(ctx, req)
+	if err != nil {
+		code, errs := errmsg.Errors[error](err)
+		return c.Status(code).JSON(response.Error(errs))
+	}
+	return c.Status(fiber.StatusOK).JSON(response.Success(nil, ""))
 }

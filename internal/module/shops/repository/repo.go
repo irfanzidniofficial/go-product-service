@@ -61,3 +61,20 @@ func (r *shopRepository) GetShop(ctx context.Context, req *entity.GetShopRequest
 
 	return resp, nil
 }
+
+func (r *shopRepository) DeleteShop(ctx context.Context, req *entity.DeleteShopRequest) error {
+
+	query := `
+        UPDATE shops
+        SET deleted_at = NOW()
+        WHERE id = ? AND user_id= ?
+    `
+
+	_, err := r.db.ExecContext(ctx, r.db.Rebind(query), req.Id, req.UserId)
+	if err != nil {
+		log.Error().Err(err).Any("payload", req).Msg("respository::DeleteShop - Failed to delete shop")
+		return err
+	}
+
+	return nil
+}

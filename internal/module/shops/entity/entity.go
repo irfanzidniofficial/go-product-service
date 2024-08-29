@@ -20,3 +20,8 @@ type GetShopResponse struct {
 	Description string `json:"description" db:"description"`
 	Terms       string `json:"terms" db:"terms"`
 }
+
+type DeleteShopRequest struct {
+	UserId string `prop:"user_id" validate:"uuid" db:"user_id"`
+	Id     string `validate:"uuid" db:"id"`
+}
