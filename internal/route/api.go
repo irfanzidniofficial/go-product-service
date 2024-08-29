@@ -1,6 +1,7 @@
 package route
 
 import (
+	handlerShop "go-product-service/internal/module/shops/handler/rest"
 	"go-product-service/pkg/response"
 
 	"github.com/gofiber/fiber/v2"
@@ -8,6 +9,12 @@ import (
 )
 
 func SetupRoutes(app *fiber.App) {
+
+	var (
+		api = app.Group("/products")
+	)
+
+	handlerShop.NewShopHandler().Register(api)
 
 	// fallback route
 	app.Use(func(c *fiber.Ctx) error {
