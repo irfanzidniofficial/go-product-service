@@ -7,8 +7,10 @@ import (
 
 type ShopRepository interface {
 	CreateShop(ctx context.Context, req *entity.CreateShopRequest) (*entity.CreateShopResponse, error)
+	GetShop(ctx context.Context, req *entity.GetShopRequest) (*entity.GetShopResponse, error)
 }
 
 type ShopService interface {
 	CreateShop(ctx context.Context, req *entity.CreateShopRequest) (*entity.CreateShopResponse, error)
+	GetShop(ctx context.Context, req *entity.GetShopRequest) (*entity.GetShopResponse, error)
 }

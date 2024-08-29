@@ -22,3 +22,7 @@ func NewShopService(repo ports.ShopRepository) *shopService {
 func (s *shopService) CreateShop(ctx context.Context, req *entity.CreateShopRequest) (*entity.CreateShopResponse, error) {
 	return s.repo.CreateShop(ctx, req)
 }
+
+func (s *shopService) GetShop(ctx context.Context, req *entity.GetShopRequest) (*entity.GetShopResponse, error) {
+	return s.repo.GetShop(ctx, req)
+}

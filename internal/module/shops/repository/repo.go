@@ -43,3 +43,21 @@ func (r *shopRepository) CreateShop(ctx context.Context, req *entity.CreateShopR
 	return resp, nil
 
 }
+
+func (r *shopRepository) GetShop(ctx context.Context, req *entity.GetShopRequest) (*entity.GetShopResponse, error) {
+	var resp = new(entity.GetShopResponse)
+
+	query := `
+        SELECT name, description, terms
+        FROM shops
+        WHERE id =?
+    `
+
+	err := r.db.QueryRowxContext(ctx, r.db.Rebind(query), req.Id).StructScan(resp)
+	if err != nil {
+		log.Error().Err(err).Any("payload", req).Msg("respository::GetShop - Failed to get shop")
+		return nil, err
+	}
+
+	return resp, nil
+}

@@ -11,5 +11,12 @@ type CreateShopResponse struct {
 	Id string `json:"id" db:"id"`
 }
 
-type CreateShopResult struct {
+type GetShopRequest struct {
+	Id string `validate:"uuid" db:"id"`
+}
+
+type GetShopResponse struct {
+	Name        string `json:"name" db:"name"`
+	Description string `json:"description" db:"description"`
+	Terms       string `json:"terms" db:"terms"`
 }

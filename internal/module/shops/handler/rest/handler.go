@@ -30,6 +30,7 @@ func NewShopHandler() *shopHandler {
 
 func (h *shopHandler) Register(router fiber.Router) {
 	router.Post("/shops", middleware.UserIdHeader, h.CreateShop)
+	router.Get("/shops/:id", h.GetShop)
 
 }
 
@@ -56,9 +57,33 @@ func (h *shopHandler) CreateShop(c *fiber.Ctx) error {
 
 	resp, err := h.service.CreateShop(ctx, req)
 	if err != nil {
-		log.Error().Err(err).Any("payload", req).Msg("handler::CreateShop - CreateShop")
-		return c.Status(fiber.StatusInternalServerError).JSON(response.Error(err))
+
+		code, errs := errmsg.Errors[error](err)
+		return c.Status(code).JSON(response.Error(errs))
 	}
 	return c.Status(fiber.StatusCreated).JSON(response.Success(resp, ""))
 
+}
+
+func (h *shopHandler) GetShop(c *fiber.Ctx) error {
+	var (
+		req = new(entity.GetShopRequest)
+		ctx = c.Context()
+		v   = adapter.Adapters.Validator
+	)
+
+	req.Id = c.Params("id")
+
+	if err := v.Validate(req); err != nil {
+		log.Warn().Err(err).Any("payload", req).Msg("handler::GetShop - Validate request body")
+		code, errs := errmsg.Errors(err, req)
+		return c.Status(code).JSON(response.Error(errs))
+	}
+
+	resp, err := h.service.GetShop(ctx, req)
+	if err != nil {
+		code, errs := errmsg.Errors[error](err)
+		return c.Status(code).JSON(response.Error(errs))
+	}
+	return c.Status(fiber.StatusOK).JSON(response.Success(resp, ""))
 }
